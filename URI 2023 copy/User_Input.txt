@@ -1,0 +1,2 @@
+Training_Data, Test_Data, K
+Gyr_X,0.3307439,3

@@ -1,0 +1,71 @@
+import numpy as np
+import csv
+from scipy.stats import kurtosis, skew
+
+
+X_train = np.loadtxt('X_train.txt')
+Y_train = np.loadtxt('Y_train.txt')
+subject_train = np.loadtxt('subject_train.txt')
+SAMPLE_SIZE = 30
+
+
+def append_to_activity():
+
+    # map the participant id, activity id & training data into a csv file.
+    with open('Participant_Gyr_Z.csv', 'w') as file1:
+        for i in range(len(subject_train)):
+
+            participant_id = int(subject_train[i])
+            activity_id = int(Y_train[i])
+            new_line = str(participant_id) + ',' + str(activity_id) + ',' + str(X_train[i][5])
+            file1.write(new_line)
+            file1.write('\n')
+
+        file1.close()
+
+    # create the features (Min, Max, SD, ... ect) from the above file. 
+    with open('Gyr_Z.csv', 'w') as file3:
+
+        file3.write('Partcipant ID, Activity ID, Sample Count, Min, Max, Std. Deviation, Average, Mean, Median, Kurtosis, Skewness\n')
+ 
+        for j in range(30):
+            participant_id = j+1
+
+            for k in range(6):
+                activity_id = k+1
+
+                # create an 1D array to hold the values of X_train for a given participant & activity combination. 
+                Acc_X = []
+                SampleCount = 0
+
+                with open('Participant_Gyr_Z.csv', 'r') as file2:
+                    line = file2.readline()
+
+                    while line != '':
+                        column = line.split(',')
+                        
+                        if ( (participant_id == int(column[0])) and (activity_id == int(column[1])) ):
+                            Acc_X.append(float(column[2].replace('\n','')))
+                            SampleCount = SampleCount + 1
+
+                            if SampleCount == SAMPLE_SIZE:
+                                if len(Acc_X) != 0:
+                                    new_line = str(participant_id) + ',' + str(activity_id) + ',' + str(SampleCount) + ',' + str(min(Acc_X)) + ',' + str(max(Acc_X)) + ',' + str(np.std(Acc_X)) + ',' + str (np.average(Acc_X)) + ',' + str(np.mean(Acc_X)) + ',' + str(np.median(Acc_X)) + "," + str(kurtosis(Acc_X)) + "," + str(skew(Acc_X))
+                                    file3.write(new_line)
+                                    file3.write('\n')
+                                    SampleCount = 0
+                                    Acc_X = []
+
+                        line = file2.readline()
+                
+                file2.close()
+
+                if len(Acc_X) != 0:
+                    new_line = str(participant_id) + ',' + str(activity_id) + ',' + str(SampleCount) + ',' + str(min(Acc_X)) + ',' + str(max(Acc_X)) + ',' + str(np.std(Acc_X)) + ',' + str (np.average(Acc_X)) + ',' + str(np.mean(Acc_X)) + ',' + str(np.median(Acc_X)) + "," + str(kurtosis(Acc_X)) + "," + str(skew(Acc_X))
+                    file3.write(new_line)
+                    file3.write('\n')
+    file3.close()
+
+
+# Call the function to process the data and save it to a CSV file
+append_to_activity()

@@ -1,0 +1,310 @@
+import numpy as np
+import csv
+
+X_train = np.loadtxt('X_train.txt')
+Y_train = np.loadtxt('Y_train.txt')
+subject_train = np.loadtxt('subject_train.txt')
+SAMPLE_SIZE = 30
+
+
+def append_to_activity():
+
+    '''
+    # Save the data to a CSV file
+    with open('partcipant_features.csv', 'w', newline='') as file:
+        # writer = csv.writer(file)
+        # writer.writerow(['Participant ID', 'Activity', 'Acc x Values'])
+        file.close()
+    '''
+        
+    # Acc_X = np.empty([150,30])
+    # Acc_X = []
+    # print('Acc_X - 1: ', Acc_X)
+
+    with open('Participant_Acc_X.csv', 'w') as file1:
+
+
+        for i in range(len(subject_train)):
+
+            participant_id = int(subject_train[i])
+            activity_id = int(Y_train[i])
+
+            # print('\n')
+            # print('**************   i: ', i, '  **************')
+            # print('participant_id: ', participant_id)
+            # print('activity_id: ', activity_id)
+            # print('X_train[i][0]: ', X_train[i][0])
+
+            new_line = str(participant_id) + ',' + str(activity_id) + ',' + str(X_train[i][5])
+            # print('new_line: ', new_line)
+            file1.write(new_line)
+            file1.write('\n')
+
+        file1.close()
+
+    # create the features (Min, Max, SD, ... ect) from the above file. 
+    with open('Acc_X.csv', 'w') as file3:
+        file3.write('Partcipant ID, Activity ID, Sample ID, Sample Count, Min, Max, Std. Deviation, Average, Mean, Median\n')
+        for j in range(30):
+            # print('\n')
+            # print('****************************')
+            participant_id = j+1
+            # print('participant_id: ', participant_id)
+
+            for k in range(6):
+                activity_id = k+1
+                # print('activity_id: ', activity_id)
+
+                # create an 1D array to hold the values of X_train for a given participant & activity combination. 
+                Acc_X = []
+                SampleCount = 0
+
+                with open('Participant_gyr_Z.csv', 'r') as file2:
+
+                    line = file2.readline()
+                    # print('first line: ', line)
+
+                    while line != '':
+                        # print('line: ', line)
+                        column = line.split(',')
+                        # print('column: ', column)
+                        # print('participant id from the file: ', column[0])
+                        # print('actviity  id from the file: ', column[1])
+                        # print('X_train value from the file: ', column[2])
+                        
+                        if ( (participant_id == int(column[0])) and (activity_id == int(column[1])) ):
+                            # print('---- participant_id & activity_id match found -----')
+                            # print('Acc_X - before: ', Acc_X)
+                            # var1 = column[2]
+                            # print('column[2]: ', var1)
+                            # var2 = column[2].replace('\n','')
+                            # print('column[2] with-out new line: ', var2)
+                            # var3 = float(var2)
+                            # print('after converting into integer', var3)
+                            # Acc_X.append(var3)
+                            Acc_X.append(float(column[2].replace('\n','')))
+                            SampleCount = SampleCount + 1
+                            # print('Acc_X - after: ', Acc_X)
+
+                            if SampleCount == SAMPLE_SIZE:
+                                if len(Acc_X) != 0:
+                                    new_line = str(participant_id) + ',' + str(activity_id) + ',' + str(SampleCount) + ',' + str(min(Acc_X)) + ',' + str(max(Acc_X)) + ',' + str(np.std(Acc_X)) + ',' + str (np.average(Acc_X)) + ',' + str(np.mean(Acc_X)) + ',' + str(np.median(Acc_X))
+                                    file3.write(new_line)
+                                    file3.write('\n')
+
+                        line = file2.readline()
+                
+                file2.close()
+
+                # print('finally, Acc_X: ', Acc_X)
+                if len(Acc_X) != 0:
+                    # print('Min: ', min(Acc_X)) 
+                    # print('Max: ', max(Acc_X)) 
+                    # print('SD: ', np.std(Acc_X))
+                    # print('Avg: ', np.average(Acc_X))
+                    # print('Mean: ', np.mean(Acc_X))
+                    # print('Median: ', np.median(Acc_X)) 
+
+                    new_line = str(participant_id) + ',' + str(activity_id) + ',' + str(SampleCount) + ',' + str(min(Acc_X)) + ',' + str(max(Acc_X)) + ',' + str(np.std(Acc_X)) + ',' + str (np.average(Acc_X)) + ',' + str(np.mean(Acc_X)) + ',' + str(np.median(Acc_X))
+                    # print('new_line: ', new_line)
+                    file3.write(new_line)
+                    file3.write('\n')
+
+
+                # print('\n')
+
+    file3.close()
+
+        # print('the length of Acc_X array is: ', len(Acc_X))
+        
+        # get the count of non-zero rows
+        # print('Acc_X - 2: ', Acc_X)
+        # non_zero_rows = np.count_nonzero((Acc_X != 0).sum(1))
+        # print('non_zero_rows: ', non_zero_rows)
+
+        # participant_activity_found = 0
+
+        # with open('Participant_Acc_X.csv', 'w') as file:
+
+'''
+            line = file.readline()
+            print('line: ', line)
+
+            if ( line != '' ):
+                row = line.split(',')
+                print('row: ', row)
+                print('row[0]: ', row[0])
+                print('row[1]: ', row[1])
+                
+                if ( line != '' and (participant_id == int(row[0])) and (activity_id == int(row[1])) ):
+                    print('---- participant_id & activity_id match found (1) -----')
+                    print('line - before: ', line)
+                    print('X_train[i][0]: ', X_train[i][0])
+                    line = line + ',' + str(X_train[i][0])
+                    print('line - after: ', line)
+                    
+                    # convert the list to string
+                    row_str = ''
+                    print('row_str - before', row_str)
+                    for element in row:
+                        row_str += element
+                    
+                    print('row_str - after', row_str)
+        
+                    file.write(line)
+                    file.write('\n')
+                    participant_activity_found = 1
+
+            # if ( line != '' and participant_activity_found == 1 ):
+            #    break
+
+            if ( participant_activity_found == 0 ) :
+
+                while line != '':
+                    print('//////////   inside the WHILE loop   ////////////')
+                    line = file.readline()
+                    print('line: ', line)
+
+                    if ( line != '' ):
+                        row = line.split(',')
+                        print('row: ', row)
+                        print('row[0]: ', row[0])
+                        print('row[1]: ', row[1])
+                        if ( (participant_id == int(row[0])) and (activity_id == int(row[1])) ):
+                            print('---- participant_id & activity_id match found (2) -----')
+                            print('line - before: ', line)
+                            print('X_train[i][0]: ', X_train[i][0])
+                            line = line + ',' + str(X_train[i][0])
+                            print('line - after: ', line)
+
+                            # convert the list to string
+                            row_str = ''
+                            print('row_str - before', row_str)
+                            for element in row:
+                                row_str += element
+                            
+                            print('row_str - after', row_str)
+        
+                            file.write(line)
+                            file.write('\n')
+                            participant_activity_found = 1
+                            break
+
+            if ( participant_activity_found == 0 ) :
+                print('---- participant_id & activity_id match NOT found -----')
+               ''' 
+            # new_line = str(participant_id) + ',' + str(activity_id) + ',' + str(X_train[i][0])
+            # print('new_line: ', new_line)
+            # file.write(new_line)
+            # file.write('\n')
+
+
+'''
+        # check whether there is an entry exists in Acc_X[] for the current participant & activity.
+        # if exists: append the X_train value to the existing entry.
+        participant_activity_found = 0
+        # last_row = 0        
+        for j in range(len(Acc_X)):
+            if ( (participant_id == Acc_X[j][0]) and (activity_id == Acc_X[j][1]) ):
+                print('---- participant_id & activity_id match found-----')
+                print('Acc_X[j] - before: ', Acc_X[j])
+                print('X_train[i][0]: ', X_train[i][0])
+                # Acc_X[j] = np.append(Acc_X[j],X_train[i][0])
+                participant_activity_found = 1
+                # last_row = j
+                for k in range(len(Acc_X[j])):
+                    if ( Acc_X[j][k] == 0.00000 ):
+                        Acc_X[j][k] = X_train[i][0]
+                        break
+
+                print('Acc_X[j] - after: ', Acc_X[j])
+                    
+        
+        # if the entry does not exists, then create a new entry in Acc_X[].
+        print('participant_activity_found: ', participant_activity_found)
+        # print('last_row: ', last_row)
+        if participant_activity_found == 0:
+            Acc_X[non_zero_rows][0] = participant_id
+            Acc_X[non_zero_rows][1] = activity_id
+            Acc_X[non_zero_rows][2] = X_train[i][0]
+
+        print('Acc_X : ', Acc_X )
+
+        if activity_id == 1:
+            WALKING.append(X_train[i])
+        elif activity_id == 2:
+            WALKING_UPSTAIRS.append(X_train[i])
+        elif activity_id == 3:
+            WALKING_DOWNSTAIRS.append(X_train[i])
+        elif activity_id == 4:
+            SITTING.append(X_train[i])
+        elif activity_id == 5:
+            STANDING.append(X_train[i])
+        elif activity_id == 6:
+            LAYING.append(X_train[i])
+
+        writer.writerows(data)
+
+    data = []
+
+    # Walking Features
+    for data_row in WALKING:
+        row = [participant_id, 'Walking']
+        for axis_data in data_row.T:
+            row.append(np.mean(axis_data))
+            row.append(np.std(axis_data))
+        data.append(row)
+
+    # Walking Upstairs Features
+    for data_row in WALKING_UPSTAIRS:
+        row = [participant_id, 'Walking Upstairs']
+        for axis_data in data_row.T:
+            row.append(np.mean(axis_data))
+            row.append(np.std(axis_data))
+        data.append(row)
+
+    # Walking Downstairs Features
+    for data_row in WALKING_DOWNSTAIRS:
+        row = [participant_id, 'Walking Downstairs']
+        for axis_data in data_row.T:
+            row.append(np.mean(axis_data))
+            row.append(np.std(axis_data))
+        data.append(row)
+
+    # Sitting Features
+    for data_row in SITTING:
+        row = [participant_id, 'Sitting']
+        for axis_data in data_row.T:
+            row.append(np.mean(axis_data))
+            row.append(np.std(axis_data))
+        data.append(row)
+
+    # Standing Features
+    for data_row in STANDING:
+        row = [participant_id, 'Standing']
+        for axis_data in data_row.T:
+            row.append(np.mean(axis_data))
+            row.append(np.std(axis_data))
+        data.append(row)
+
+    # Laying Features
+    for data_row in LAYING:
+        row = [participant_id, 'Laying']
+        for axis_data in data_row.T:
+            row.append(np.mean(axis_data))
+            row.append(np.std(axis_data))
+        data.append(row)
+
+    # Save the data to a CSV file
+    with open('extracted_features.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Participant ID', 'Activity', 'Acc x Mean', 'Acc x Std', 'Acc y Mean', 'Acc y Std', 'Acc z Mean', 'Acc z Std',
+                         'Gry x Mean', 'Gry x Std', 'Gry y Mean', 'Gry y Std', 'Gry z Mean', 'Gry z Std'])
+        writer.writerows(data)
+    
+    '''
+
+   
+
+# Call the function to process the data and save it to a CSV file
+append_to_activity()

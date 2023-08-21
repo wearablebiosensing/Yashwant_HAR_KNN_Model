@@ -1,0 +1,6 @@
+Acc_X,Participant_Acc_X.csv,Acc_X_Activity.csv
+Acc_Y,Participant_Acc_Y.csv,Acc_Y_Activity.csv
+Acc_Z,Participant_Acc_Z.csv,Acc_Z_Activity.csv
+Gyr_X,Participant_Gyr_X.csv,Gyr_X_Activity.csv
+Gyr_Y,Participant_Gyr_Y.csv,Gyr_Y_Activity.csv
+Gyr_Z,Participant_Gyr_Z.csv,Gyr_Z_Activity.csv
